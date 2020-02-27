@@ -144,15 +144,46 @@ Setup Jenkins using Helm Chart on AWS EC2
                     
   9. Create JenkinsFile to run the following job in Jenkins:
   
-  	First Configure GitHub and Docker Credentials-->System-->Global Credentials in Jenkins
+  	In Jenkinsfile, will have four steps:
 	
-	ID Value for Github: Git
-	ID Value for Docker: docker-hub-credentials
+		- Clone Repository from GitHub that contains Dockerfile
+		
+			checkout scm
+			
+		- Build Image using Dockerfile
+			
+			app = docker.build("vivekmistry/JenkinsHelmChart")
+			
+		- Test Image
+		
+			app.inside {
+        		sh 'echo "Tests passed"'
+        		}
+			
+		- Push Image to DockerHub
+		
+			docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+           		app.push("${env.BUILD_NUMBER}")
+            		app.push("latest")
 	
+
 	
-   Now, create the Job in Jenkins of Type Multibranch Pipeline:
+   10. Next Configure GitHub and Docker Credentials-->System-->Global Credentials in Jenkins
+	
+		ID Value for Github: Git
+		ID Value for Docker: docker-hub-credentials
+
+	
+   11. Now, create the Job in Jenkins of Type Multibranch Pipeline:
    	
 	In Job Configuration Page, add the GitHub Credentials that was added in previous step. With this option, bydefault Build 		Configuration will consider Jenkinsfile from Git Repository
+		
+  12. Now Build Job:
+  	
+	Refering to instructionns in Jenkinsfile, the DockerFile will fetch from GitHub followed by Building Image, Test and Push
+  	
+		
+		
 	
 	
    	
