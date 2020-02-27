@@ -1,6 +1,6 @@
-# JenkinsHelmChart on AWS EC2 - Ubuntu:
+# JenkinsHelmChartDocker on AWS EC2 - Ubuntu:
 
-Setup Jenkins using Helm Chart on AWS EC2
+Setup Jenkins using Helm Chart on AWS EC2 and run Jenkinsfile to Build, Test & Push Docker Image
 
 1. Step Ubuntu EC2 Small Instance of 2 Core vCPUs and 2GiB Memory using default VPC Configuration
 
