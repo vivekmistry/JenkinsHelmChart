@@ -1,0 +1,64 @@
+master:
+  componentName: "jenkins-master"
+  image: "jenkins/jenkins"
+  tag: "lts"
+  imagePullPolicy: "Always"
+  Component: "jenkins-master"
+  
+  adminUser: "admin"
+  adminPassword: "admin"
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "1024Mi"
+
+  usePodSecurityContext: true
+  
+  servicePort: 8091
+  targetPort: 8091
+
+  serviceType: NodePort
+  NodePort: 32330
+  
+  serviceLabels: {}
+
+  podLabels: {}
+  
+  healthProbes: true
+  healthProbesLivenessTimeout: 5
+  healthProbesReadinessTimeout: 5
+  healthProbeLivenessPeriodSeconds: 10
+  healthProbeReadinessPeriodSeconds: 10
+  healthProbeLivenessFailureThreshold: 5
+  healthProbeReadinessFailureThreshold: 3
+  healthProbeLivenessInitialDelay: 90
+  healthProbeReadinessInitialDelay: 60
+  slaveListenerPort: 50000
+  slaveHostPort:
+  disabledAgentProtocols:
+    - JNLP-connect
+    - JNLP2-connect
+  csrf:
+    defaultCrumbIssuer:
+      enabled: true
+      proxyCompatability: true
+  cli: false
+  
+  # List of plugins to be install during Jenkins master start
+  installPlugins:
+    - kubernetes:1.21.2
+    - workflow-job:2.36
+    - workflow-aggregator:2.6
+    - credentials-binding:1.20
+    - git:4.0.0
+
+  ingress:
+    enabled: false
+    # For Kubernetes v1.14+, use 'networking.k8s.io/v1beta1'
+    apiVersion: "extensions/v1beta1"
+    labels: {}
+    annotations: {}
+    
