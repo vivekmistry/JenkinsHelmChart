@@ -1,3 +1,5 @@
+
+
 master:
   componentName: "jenkins-master"
   image: "jenkins/jenkins"
@@ -17,16 +19,27 @@ master:
 
   usePodSecurityContext: true
   
-  servicePort: 8091
-  targetPort: 8091
-
+  servicePort: 8085
+  targetPort: 8085
+  # For minikube, set this to NodePort, elsewhere use LoadBalancer
+  # Use ClusterIP if your setup includes ingress controller
   serviceType: NodePort
   NodePort: 32330
-  
+  # Jenkins master service annotations
+  serviceAnnotations: {}
+  # Jenkins master custom labels
+  deploymentLabels: {}
+  #   foo: bar
+  #   bar: foo
+  # Jenkins master service labels
   serviceLabels: {}
-
+  #   service.beta.kubernetes.io/aws-load-balancer-backend-protocol: https
+  # Put labels on Jenkins master pod
   podLabels: {}
-  
+  # Used to create Ingress record (should used with ServiceType: ClusterIP)
+  # nodePort: <to set explicitly, choose port between 30000-32767
+  # Enable Kubernetes Liveness and Readiness Probes
+  # ~ 2 minutes to allow Jenkins to restart when upgrading plugins. Set ReadinessTimeout to be shorter than LivenessTimeout.
   healthProbes: true
   healthProbesLivenessTimeout: 5
   healthProbesReadinessTimeout: 5
@@ -55,6 +68,29 @@ master:
     - credentials-binding:1.20
     - git:4.0.0
 
+  # Enable to always override the installed plugins with the values of 'master.installPlugins' on upgrade or redeployment.
+  # overwritePlugins: true
+  # Enable HTML parsing using OWASP Markup Formatter Plugin (antisamy-markup-formatter), useful with ghprb plugin.
+  # The plugin is not installed by default, please update master.installPlugins.
+  enableRawHtmlMarkupFormatter: false
+  # Used to approve a list of groovy functions in pipelines used the script-security plugin. Can be viewed under /scriptApproval
+  scriptApproval: []
+  #  - "method groovy.json.JsonSlurperClassic parseText java.lang.String"
+  #  - "new groovy.json.JsonSlurperClassic"
+  # List of groovy init scripts to be executed during Jenkins master start
+  initScripts: []
+  #  - |
+  #    print 'adding global pipeline libraries, register properties, bootstrap jobs...'
+  # Kubernetes secret that contains a 'credentials.xml' for Jenkins
+  # credentialsXmlSecret: jenkins-credentials
+  # Kubernetes secret that contains files to be put in the Jenkins 'secrets' directory,
+  # useful to manage encryption keys used for credentials.xml for instance (such as
+  # master.key and hudson.util.Secret)
+  # secretsFilesSecret: jenkins-secrets
+  # Jenkins XML job configs to provision
+  jobs: {}
+  #  test: |-
+
   ingress:
     enabled: false
     # For Kubernetes v1.14+, use 'networking.k8s.io/v1beta1'
@@ -62,3 +98,7 @@ master:
     labels: {}
     annotations: {}
     
+
+  
+
+
